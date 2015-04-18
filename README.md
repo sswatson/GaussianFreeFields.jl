@@ -77,10 +77,25 @@ plot_surface(X, Y, h0, rstride = 1, cstride = 1, cmap="autumn")
 
 ![A zero-boundary Gaussian free field](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/gff.png)
 
+With `Contour`, we can look at the level lines of the Gaussian free field.
+
+```julia
+using Graphics2D 
+using Contour 
+using GaussianFreeFields 
+n = 250 
+h = DGFF(n) 
+h0 = fix_boundary_values(h) 
+showgraphics([Line(c; rs=1.0, color=0.3*green) 
+           for c in contour([1.0:n],[1.0:n],h0,0.0).lines]; dim = 1024) 
+```
+
+![GFF level lines](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/gfflevellines.png)
+
 The Julia function `writecsv` can be used to export the data:
 
 ```julia
-writecsv("/Users/sswatson/Desktop/h.csv",h0)
+writecsv("h.csv",h0)
 ```
 
 
