@@ -110,7 +110,7 @@ for θ=0.0:0.05:2π
 end
 ```
 
-![SLE fan](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/slefan.png)
+![SLE fan](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/SLEfan.png)
 
 The Julia function `writecsv` can be used to export the data:
 
