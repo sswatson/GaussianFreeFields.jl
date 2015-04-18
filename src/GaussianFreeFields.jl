@@ -1,8 +1,13 @@
 module GaussianFreeFields
 
+import Contour,
+       Graphics2D,
+       Grid
+
 export DGFF,
        fix_boundary_values,
-       inside
+       inside, 
+       flowline
 
 function DGFF(n::Int)
     h = complex(zeros(n,n));
@@ -71,13 +76,28 @@ function inside(p::Array{Float64,1},γ::Array{Float64,2})
     return isodd(cntr)    
 end
 
-import Contour
 import Graphics2D.Line
 
 function Line(curve::Contour.Curve2{Float64};args...)
     cv = curve.vertices
     return Line(hcat(Float64[cv[k][1] for k=1:length(cv)], 
     Float64[cv[k][2] for k=1:length(cv)]);args...)
+end
+
+import Grid.getindex
+getindex(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear}, z0::Complex{Float64}) = h[real(z0),imag(z0)]
+
+function flowline(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear},
+                  z0::Complex{Float64},
+                  χ::FloatingPoint,
+                  θ::FloatingPoint;
+                  δ::FloatingPoint=0.01)
+    (a,b) = size(h.coefs)
+    η = [z0]
+    while 1.0 ≤ real(η[end]) ≤ a && 1.0 ≤ imag(η[end]) ≤ b
+        push!(η, η[end] + δ * exp(im*h[η[end]]/χ + im*θ))
+    end
+    return η
 end
 
 end # module
