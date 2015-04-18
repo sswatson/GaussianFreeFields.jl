@@ -92,6 +92,26 @@ showgraphics([Line(c; rs=1.0, color=0.3*green)
 
 ![GFF level lines](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/gfflevellines.png)
 
+We can also calculate the [GFF flow lines](http://arxiv.org/abs/1201.1496)
+
+```julia
+using Graphics2D
+using GaussianFreeFields
+using Grid
+n = 250
+h = InterpGrid(fix_boundary_values(DGFF(n)),BCnil,InterpLinear);
+κ = 3
+χ = 2/sqrt(κ) - sqrt(κ)/2
+z0 = (n+1)/2 + im*(n+1)/2
+δ = 0.01;
+fan = GraphicElement[]
+for θ=0.0:0.05:2π
+	push!(fan,Line(flowline(h, z0, χ, θ);color=θ/(2π)*green + (1-θ/(2π))*blue))
+end
+```
+
+![SLE fan](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/slefan.png)
+
 The Julia function `writecsv` can be used to export the data:
 
 ```julia
