@@ -89,9 +89,9 @@ getindex(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear}, z0::Complex
 
 function flowline(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear},
                   z0::Complex{Float64},
-                  χ::FloatingPoint,
-                  θ::FloatingPoint;
-                  δ::FloatingPoint=0.01)
+                  χ::AbstractFloat,
+                  θ::AbstractFloat;
+                  δ::AbstractFloat=0.01)
     (a,b) = size(h.coefs)
     η = [z0]
     while 1.0 ≤ real(η[end]) ≤ a && 1.0 ≤ imag(η[end]) ≤ b
