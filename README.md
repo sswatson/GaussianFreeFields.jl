@@ -86,9 +86,8 @@ using GaussianFreeFields
 n = 250 
 h = DGFF(n) 
 h0 = fix_boundary_values(h) 
-showgraphics([Line(c; rs=1.0, color=0.3*green) 
-           for c in contour([1.0:n],[1.0:n],h0,0.0).lines]; dim = 1024) 
-```
+showgraphics([Line(c; linewidth=1.0, color=0.3*"green") 
+     for c in contour(collect(1.0:n),collect(1.0:n),h0,0.0).lines]; dim = 1024)```
 
 ![GFF level lines](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/gfflevellines.png)
 
@@ -106,8 +105,11 @@ z0 = (n+1)/2 + im*(n+1)/2
 δ = 0.01;
 fan = GraphicElement[]
 for θ=0.0:0.05:2π
-	push!(fan,Line(flowline(h, z0, χ, θ);color=θ/(2π)*green + (1-θ/(2π))*blue))
+	push!(fan,Line(flowline(h, z0, χ, θ);
+	               color=θ/(2π)*"green" + (1-θ/(2π))*"blue"))
 end
+
+showgraphics([Line([1 1; n 1; n n; 1 n; 1 1]);fan])
 ```
 
 ![SLE fan](https://github.com/sswatson/GaussianFreeFields.jl/blob/master/images/SLEfan.png)
