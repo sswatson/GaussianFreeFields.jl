@@ -1,3 +1,5 @@
+__precompile__(true)
+
 module GaussianFreeFields
 
 import Contour,
@@ -91,11 +93,18 @@ function flowline(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear},
                   z0::Complex{Float64},
                   χ::AbstractFloat,
                   θ::AbstractFloat;
-                  δ::AbstractFloat=0.01)
+                  δ::AbstractFloat=0.01,
+                  S::Set{Complex{Float64}}=Set())
     (a,b) = size(h.coefs)
     η = [z0]
     while 1.0 ≤ real(η[end]) ≤ a && 1.0 ≤ imag(η[end]) ≤ b
         push!(η, η[end] + δ * exp(im*h[η[end]]/χ + im*θ))
+        w = η[end]
+        for z in S
+            if abs2(z-w) < 1e-3
+                return η
+            end
+        end
     end
     return η
 end
