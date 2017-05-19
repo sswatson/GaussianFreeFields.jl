@@ -65,24 +65,27 @@ function harmonicextension{T<:Number}(h::Array{T,2},vertices::Set)
         return [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
     end
     vertexmap = Dict(map(reverse,enumerate([(i,j) for i=1:m,j=1:n][:])));
-    A = spzeros(m*n,m*n)
+    I = Int64[]
+    J = Int64[]
+    V = Float64[]
     b = zeros(m*n)
     for v in keys(vertexmap)
         if v in vertices
             k = vertexmap[v]
-            A[k,k] = 1
+            push!(I,k); push!(J,k); push!(V,1)
             b[k] = h[k]
         else
             k = vertexmap[v]
             for nb in neighbors(v...)
                 try
-                    l = vertexmap[nb]
-                    A[k,l] += 1
-                    A[k,k] += -1
+                    j = vertexmap[nb]
+                    push!(I,k); push!(J,j); push!(V,1)
+                    push!(I,k); push!(J,k); push!(V,-1)
                 end
             end
         end
     end
+    A = sparse(I,J,V)
     return reshape(lufact(A) \ b,m,n)
 end
 
