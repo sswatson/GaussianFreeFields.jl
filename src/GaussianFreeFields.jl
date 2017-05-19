@@ -8,7 +8,7 @@ import Contour,
 
 export DGFF,
        fix_boundary_values,
-       harmonicextension
+       harmonicextension,
        inside, 
        flowline
 
