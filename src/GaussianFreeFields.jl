@@ -4,7 +4,7 @@ module GaussianFreeFields
 
 import Contour,
        Graphics2D,
-       Grid
+       Interpolations
 
 export DGFF,
        fix_boundary_values,
@@ -138,10 +138,18 @@ function Line(curve::Contour.Curve2{Float64};args...)
     Float64[cv[k][2] for k=1:length(cv)]);args...)
 end
 
-import Grid.getindex
-getindex(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear}, z0::Complex{Float64}) = h[real(z0),imag(z0)]
+import Interpolations.interpolate
 
-function flowline(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear},
+function interpolate(h::Array{Float64,2})
+    return interpolate(h,
+                       Interpolations.BSpline(Interpolations.Linear()),
+                       Interpolations.OnGrid())
+end
+
+getindex(h::Interpolations.BSplineInterpolation,
+         z0::Complex{Float64}) = h[real(z0),imag(z0)]
+
+function flowline(h::Interpolations.BSplineInterpolation,
                   z0::Complex{Float64},
                   χ::AbstractFloat,
                   θ::AbstractFloat;
@@ -160,5 +168,12 @@ function flowline(h::Grid.InterpGrid{Float64,2,Grid.BCnil,Grid.InterpLinear},
     end
     return η
 end
+
+flowline(h::Array{Float64,2},
+         z0::Complex{Float64},
+         χ::AbstractFloat,
+         θ::AbstractFloat;
+         δ::AbstractFloat=0.01,
+         S::Set{Complex{Float64}}=Set()) = flowline(interpolate(h),z0,χ,θ,δ,S)
 
 end # module
