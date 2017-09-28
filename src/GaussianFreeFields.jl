@@ -10,7 +10,8 @@ export DGFF,
        fix_boundary_values,
        harmonicextension,
        inside, 
-       flowline
+       flowline,
+       interpolate 
 
 function DGFF(n::Int)
     h = complex(zeros(n,n))
@@ -139,22 +140,26 @@ function Line(curve::Contour.Curve2{Float64};args...)
 end
 
 import Interpolations.interpolate
-
-function interpolate(h::Array{Float64,2})
+function interpolate(h::Array{T,2}) where T <: Real
     return interpolate(h,
                        Interpolations.BSpline(Interpolations.Linear()),
                        Interpolations.OnGrid())
 end
 
+import Base.getindex 
 getindex(h::Interpolations.BSplineInterpolation,
-         z0::Complex{Float64}) = h[real(z0),imag(z0)]
+         z0::Complex) = h[real(z0),imag(z0)]
 
+"""
+Find the flow line of angle θ in the field h. 
+In other words, solve the DE η'(t) = exp(ih(η(t))/χ + iθ)". 
+"""
 function flowline(h::Interpolations.BSplineInterpolation,
-                  z0::Complex{Float64},
-                  χ::AbstractFloat,
-                  θ::AbstractFloat;
-                  δ::AbstractFloat=0.01,
-                  S::Set{Complex{Float64}}=Set())
+                  z0::Complex,
+                  χ::Real,
+                  θ::Real;
+                  δ::Real=0.01,
+                  S::Set{Complex}=Set{Complex}())
     (a,b) = size(h.coefs)
     η = [z0]
     while 1.0 ≤ real(η[end]) ≤ a && 1.0 ≤ imag(η[end]) ≤ b
